@@ -1,0 +1,119 @@
+{
+    "queryType": "topN",
+    "dataSource": "events_agg",
+    "intervals": [
+        "2019-02-01T08/2020-01-28T09:14:48"
+    ],
+    "granularity": "all",
+    "context": {
+        "priority": 1,
+        "queryId": "client-activeusers.36829.585183"
+    },
+    "filter": {
+        "type": "and",
+        "fields": [{
+                "type": "selector",
+                "dimension": "app_id",
+                "value": "36829"
+            },
+            {
+                "type": "not",
+                "field": {
+                    "type": "or",
+                    "fields": [{
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_SessionEnd"
+                        },
+                        {
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_PredictedChurn"
+                        },
+                        {
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_Uninstall"
+                        },
+                        {
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_PushSent"
+                        },
+                        {
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_PushHoldout"
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "selector",
+                "dimension": "custom_keys",
+                "value": "this"
+            }
+        ]
+    },
+    "aggregations": [{
+            "name": "Active_Users",
+            "type": "hyperUnique",
+            "fieldName": "unique_devices"
+        },
+        {
+            "type": "filtered",
+            "name": "Revenue",
+            "filter": {
+                "type": "selector",
+                "dimension": "event_name",
+                "value": "Purchase"
+            },
+            "aggregator": {
+                "name": "Revenue",
+                "type": "doubleSum",
+                "fieldName": "dimension_sum"
+            }
+        },
+        {
+            "type": "filtered",
+            "name": "Purchases",
+            "filter": {
+                "type": "selector",
+                "dimension": "event_name",
+                "value": "Purchase"
+            },
+            "aggregator": {
+                "name": "Purchases",
+                "type": "doubleSum",
+                "fieldName": "dimension_count"
+            }
+        }
+    ],
+    "postAggregations": [{
+        "type": "arithmetic",
+        "fn": "/",
+        "fields": [{
+                "type": "fieldAccess",
+                "fieldName": "Revenue"
+            },
+            {
+                "type": "hyperUniqueCardinality",
+                "fieldName": "Active_Users"
+            }
+        ],
+        "name": "Revenue_Per_User"
+    }],
+    "dimension": {
+        "type": "extraction",
+        "dimension": "custom_dimensions",
+        "outputName": "this",
+        "extractionFn": {
+            "type": "partial",
+            "expr": "^this "
+        }
+    },
+    "metric": {
+        "type": "lexicographic"
+    },
+    "threshold": 1000
+}

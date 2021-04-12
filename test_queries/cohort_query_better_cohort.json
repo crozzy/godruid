@@ -1,0 +1,69 @@
+{
+"queryType": "topN",
+"dataSource": "events_agg",
+"intervals": [
+  "2020-01-01/2020-01-31"
+],
+"granularity": "all",
+"context": {
+  "priority": 1,
+  "queryId": "client-eventsagg.28915.281747"
+},
+"filter": {
+  "type": "and",
+  "fields": [
+    {
+      "type": "selector",
+      "dimension": "app_id",
+      "value": "28915"
+    },
+    {
+      "type": "not",
+      "field": {
+        "type": "selector",
+        "dimension": "event_name",
+        "value": "_SessionEnd"
+      }
+    },
+    {
+      "type": "bound",
+      "dimension": "attribution_day",
+      "upper": "2020-01-22T00:00:00+00:00",
+      "lower": "2020-01-01T00:00:00+00:00",
+      "extractionFn": {
+          "type": "timeFormat",
+          "format": "EEEE",
+          "timeZone": "America/New_York",
+          "locale": "en"
+      }
+    },
+    {
+      "type": "not",
+      "field": {
+        "type": "selector",
+        "dimension": "attribution_attribution_action",
+        "value": "event"
+      }
+    }
+  ]
+},
+"aggregations": [
+  {
+    "name": "Count",
+    "type": "doubleSum",
+    "fieldName": "dimension_count"
+  },
+  {
+    "name": "Dimension_Sum",
+    "type": "doubleSum",
+    "fieldName": "dimension_sum"
+  }
+],
+"dimension": {
+  "type": "default",
+  "dimension": "event_name",
+  "outputName": "event_name"
+},
+"metric": "Count",
+"threshold": 250
+}

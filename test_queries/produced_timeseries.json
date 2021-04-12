@@ -1,0 +1,108 @@
+{
+    "queryType": "timeseries",
+    "dataSource": "events_agg",
+    "decending": false,
+    "intervals": [
+        "2019-02-01T08/2020-01-28T09:14:48"
+    ],
+    "granularity": {
+        "type": "period",
+        "period": "P1M",
+        "timeZone": "Europe/Prague",
+        "origin": "2020-01-20T00:00:00Z"
+    },
+    "filter": {
+        "type": "and",
+        "fields": [{
+                "type": "not",
+                "field": {
+                    "type": "or",
+                    "fields": [{
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_SessionEnd"
+                        },
+                        {
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_PredictedChurn"
+                        },
+                        {
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_Uninstall"
+                        },
+                        {
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_PushSent"
+                        },
+                        {
+                            "type": "selector",
+                            "dimension": "event_name",
+                            "value": "_PushHoldout"
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "selector",
+                "dimension": "app_id",
+                "value": "36829"
+            }
+        ]
+    },
+    "aggregations": [{
+            "type": "filtered",
+            "name": "Revenue",
+            "filter": {
+                "type": "selector",
+                "dimension": "event_name",
+                "value": "Purchase"
+            },
+            "aggregator": {
+                "type": "doubleSum",
+                "name": "Revenue",
+                "fieldName": "dimension_sum"
+            }
+        },
+        {
+            "type": "filtered",
+            "name": "Purchases",
+            "filter": {
+                "type": "selector",
+                "dimension": "event_name",
+                "value": "Purchase"
+            },
+            "aggregator": {
+                "type": "doubleSum",
+                "name": "Purchases",
+                "fieldName": "dimension_count"
+            }
+        },
+        {
+            "type": "hyperUnique",
+            "name": "Active_Users",
+            "fieldName": "unique_devices"
+        }
+    ],
+    "postAggregation": {
+        "type": "arithmetic",
+        "name": "Revenue_Per_User",
+        "fields": [{
+                "type": "fieldAccess",
+                "fieldName": "Revenue"
+            },
+            {
+                "type": "hyperUniqueCardinality",
+                "fieldName": "Active_Users"
+            }
+        ],
+        "fn": "/"
+    },
+    "context": {
+        "priority": 1,
+        "queryId": "client-activeusers.36829.651768",
+        "skipEmptyBuckets": false
+    }
+}
