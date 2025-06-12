@@ -1,15 +1,15 @@
 # godruid
 
-godruid exposes a simple API to create, execute, and analyze [Druid](http://druid.io/) queries. Build from the standpoint of "give the caller as much control as possible", the client and the query creation are seperate so the caller can replace either should they wish. There is nothing to stop users using the same client in different goroutines should they wish, the client will not open any connection until `Run()` is called on a query. All queries implement the `ToJSON()` method to allow the caller access to the query JSON should they need it.
+godruid exposes a simple API to create, execute, and analyze [Druid](http://druid.io/) queries. Build from the standpoint of "give the caller as much control as possible", the client and the query creation are separate so the caller can replace either should they wish. There is nothing to stop users using the same client in different goroutines should they wish, the client will not open any connection until `Run()` is called on a query. All queries implement the `ToJSON()` method to allow the caller access to the query JSON should they need it.
 
-The instanciating functions for creating queries take the required fields and helper methods for adding the optional fields, hence filters are added after query creation to make the API as clean as possible.
+The instantiating functions for creating queries take the required fields and helper methods for adding the optional fields, hence filters are added after query creation to make the API as clean as possible.
 
-There is minimal hand-holding when it comes to filter, aggregation or postaggregation object, you can easily create a monster that Druid will reject at the moment, it's still to be decided if more guardrails will be added.
+There is minimal hand-holding when it comes to filter, aggregation or post-aggregation object, you can easily create a monster that Druid will reject at the moment, it's still to be decided if more guardrails will be added.
 
 
 # examples
 
-The following exampes show how to execute and analyze the results of three types of queries: timeseries, topN, and groupby. We will use these queries to ask simple questions about twitter's public data set.
+The following examples show how to execute and analyze the results of three types of queries: timeseries, topN, and groupby. We will use these queries to ask simple questions about twitter's public data set.
 
 ## timeseries
 
